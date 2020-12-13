@@ -5,18 +5,18 @@ const UserSchema = new Schema(
     username: {
       type: String, 
       unique: true,
-      required: "Valid username is required!",
+      required: 'A unique username is required!',
       trimmed: true
     },
     email: {
       type: String,
-      required: true, 
+      required: 'Valid email is required', 
       unique: true,
       match: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/
     },
     thoughts: {
       type: Schema.Types.ObjectId,
-      ref: 'Thoughts'
+      ref: 'Thought'
     },
     friends: {
       type: Schema.Types.ObjectId,
@@ -31,9 +31,9 @@ const UserSchema = new Schema(
   }
 );
 
-UserSchema.virtual('friendCount').get(function(){
+UserSchema.virtual('friendCount').get(function() {
   return this.friends.length;
-})
+});
 
 const User = model('User', UserSchema);
 

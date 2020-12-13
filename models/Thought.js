@@ -14,7 +14,7 @@ const ReactionSchema = new Schema (
     },
     username: {
       type: String,
-      required: 'Each reaction must be accompanied by a user'
+      required: 'A reaction must have a user'
     },
     createdAt: {
       type: Date,
@@ -44,13 +44,14 @@ const ThoughtSchema = new Schema (
     },
     username: {
       type: String,
-      required: 'A thought must be accompanied by a username'
+      required: 'A thought must have a user'
     },
     reactions: [ReactionSchema]
   },
   {
     toJSON: {
-      virtuals: true
+      virtuals: true,
+      getters: true
     },
     id: false
   }
@@ -60,6 +61,6 @@ ThoughtSchema.virtual('reactionCount').get(function() {
   return this.reactions.length;
 });
 
-const Thought = model('Thought', ThoughSchema);
+const Thought = model('Thought', ThoughtSchema);
 
 module.exports = Thought;
