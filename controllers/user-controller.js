@@ -45,7 +45,7 @@ const userController = {
 
   // update User by id
   updateUser({ params, body }, res) {
-    User.findOneAndUpdate({ _id: params.id }, body, { new: true })
+    User.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
       .then(dbUserData => {
         if (!dbUserData) {
           res.status(404).json({ message: 'No user found with this id!' });
@@ -76,17 +76,27 @@ const userController = {
 
   // create friend 
   createFriend({ params }, res) {
-    User.findByIdAndUpdate(
-      { _id: params.userId },
-      { $push: { friends: { _id: params.friendId } } },
+    User.findOneAndUpdate(
+      { _id: params.id },
+      { $push: { friends: { _id: params.friendsId } } },
       { new: true, runValidators: true }
     )
     .then(dbUserData => {
       if (!dbUserData) {
-        res.status(404).json({ message: 'No user with this id!'});
-        return;
+        return res.status(404).json({ message: 'No user with this id!'});
       }
-      res.json(dbUserData);
+      return User.findOneAndUpdate(
+        { _id: params.friendsId},
+        { $push: {friends: params.id}},
+        {new: true, runValidators: true }
+      )
+      .then(dbFriendData => {
+        if (!dbFriendData) {
+          res.status(404).json({ message: 'No friend found with this id!' });
+          return;
+        }
+        res.json(dbFriendData);
+      });
     })
     .catch(err => res.json(err));
   },
@@ -94,16 +104,26 @@ const userController = {
   // delete friend
   deleteFriend({ params }, res) {
     User.findOneAndUpdate(
-      { _id: params.userId },
-      { $pull: { friends: { _id: params.friendId } } },
+      { _id: params.id },
+      { $pull: { friends: { _id: params.friendsId } } },
       { new: true, runValidators: true }
     )
     .then(dbUserData => {
       if (!dbUserData) {
-        res.status(404).json({ message: 'No user with this id!' });
-        return;
+        return res.status(404).json({ message: 'No user with this id!' });
       }
-      res.json(dbUserData);
+      return User.findOneAndUpdate(
+        { _id: params.friendsId },
+        { $pull: { friends: { _id: params.id } } },
+        { new: true, runValidators: true }
+      )
+      .then(dbFriendData => {
+        if (!dbFriendData) {
+          res.status(404).json({ message: 'No friend found with this id!' });
+          return;
+        }
+        res.json(dbFriendData);
+      });
     })
     .catch(err => res.json(err));
   } 
