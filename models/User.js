@@ -14,18 +14,23 @@ const UserSchema = new Schema(
       unique: true,
       match: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/
     },
-    thoughts: {
-      type: Schema.Types.ObjectId,
-      ref: 'Thought'
-    },
-    friends: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    }
+    thoughts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Thought'
+      }
+    ],
+    friends: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+      }
+    ]
   },
   {
     toJSON: {
-      virtuals: true
+      virtuals: true,
+      getters: true
     },
     id: false
   }

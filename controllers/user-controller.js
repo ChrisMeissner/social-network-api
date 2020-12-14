@@ -11,6 +11,7 @@ const userController = {
       .select('-__v')
       .then(dbUserData => res.json(dbUserData))
       .catch(err => {
+        console.log(err);
         res.status(400).json(err);
       })
   },
@@ -78,7 +79,7 @@ const userController = {
     User.findByIdAndUpdate(
       { _id: params.userId },
       { $push: { friends: { _id: params.friendId } } },
-      { new: true }
+      { new: true, runValidators: true }
     )
     .then(dbUserData => {
       if (!dbUserData) {
@@ -95,7 +96,7 @@ const userController = {
     User.findOneAndUpdate(
       { _id: params.userId },
       { $pull: { friends: { _id: params.friendId } } },
-      { new: true }
+      { new: true, runValidators: true }
     )
     .then(dbUserData => {
       if (!dbUserData) {
