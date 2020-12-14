@@ -2,7 +2,7 @@ const { User, Thought } = require('../models');
 
 const userController = {
   // get all Users
-  getAllUser(req, res) {
+  getAllUsers(req, res) {
     User.find({})
       .populate({
         path: 'thoughts',
@@ -44,7 +44,7 @@ const userController = {
 
   // update User by id
   updateUser({ params, body }, res) {
-    User.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
+    User.findOneAndUpdate({ _id: params.id }, body, { new: true })
       .then(dbUserData => {
         if (!dbUserData) {
           res.status(404).json({ message: 'No user found with this id!' });
@@ -63,4 +63,4 @@ const userController = {
   }
 };
 
-module.exports = UserController;
+module.exports = userController;
